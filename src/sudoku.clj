@@ -11,6 +11,8 @@
 (defn has-value? [board coord]
   (not (zero? (value-at board coord))))
 
+(def does-not-have-value? (complement has-value?))
+
 (defn row-values [board coord]
   (let [[row _] coord]
     (set (get board row))))
@@ -83,18 +85,16 @@
   (assoc-in board coord new-value))
 
 (defn find-empty-point [board]
-  (first (filter (fn [coords] (= 0 (value-at board coords)))
-                 (for [row (range 9)
-                       col (range 9)]
-                   (vector row col)))))
+  (first (filter (fn [coords] (does-not-have-value? board coords))
+                 (coord-pairs (range 9)))))
 
 (defn solve [board]
-  (let [empties (find-empty-point board)]
-    (if (empty? empties)
+  (let [empty-coord (find-empty-point board)]
+    (if (empty? empty-coord)
       (if (valid-solution? board)
         board
         [])
-      (let [valids (valid-values-for board empties)]
+      (let [valids (valid-values-for board empty-coord)]
         (for [v valids
-              solution (solve (set-value-at board empties v))]
+              solution (solve (set-value-at board empty-coord v))]
           solution)))))

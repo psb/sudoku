@@ -69,9 +69,8 @@
   (every? #(= all-values %) (cols board)))
 
 (defn blocks [board]
-  (for [row [0 3 6]
-        col [0 3 6]]
-    (set (block-values board (vector row col)))))
+  (map (fn [coord] (set (block-values board coord)))
+       (coord-pairs [0 3 6])))
 
 (defn valid-blocks? [board]
   (every? #(= all-values %) (blocks board)))
@@ -85,7 +84,7 @@
   (assoc-in board coord new-value))
 
 (defn find-empty-point [board]
-  (first (filter (fn [coords] (does-not-have-value? board coords))
+  (first (filter (fn [coord] (does-not-have-value? board coord))
                  (coord-pairs (range 9)))))
 
 (defn solve [board]
